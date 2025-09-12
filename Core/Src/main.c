@@ -32,13 +32,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define INIT	0
-#define RED		1
-#define YELLOW	2
+#define INIT 0
+#define RED 1
+#define GREEN 2
+#define YELLOW 3
 
-#define ON 		0
-#define OFF 	1
-
+#define ON 0
+#define OFF 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -58,6 +58,8 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 void red_led(uint8_t n);
 void yellow_led(uint8_t n);
+void green_led(uint8_t n);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -94,24 +96,39 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-	uint8_t state = INIT;
-	uint8_t count = 200;
-
+  uint8_t state = 0;
+  uint16_t count = 100;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
 	  switch(state){
 	  case INIT:
-		  red_led(OFF);
-		  yellow_led(OFF);
-		  state = RED;
-		  break;
+		  red_led(ON);
+		  green_led(ON);
+		  yellow_led(ON);
 
+		  if(count == 0){
+			  state = RED;
+			  count = 500;
+		  }
+		  break;
 	  case RED:
 		  red_led(ON);
+		  green_led(OFF);
+		  yellow_led(OFF);
+
+		  if(count == 0){
+			  state = GREEN;
+			  count = 300;
+		  }
+		  break;
+	  case GREEN:
+		  red_led(OFF);
+		  green_led(ON);
 		  yellow_led(OFF);
 
 		  if(count == 0){
@@ -119,16 +136,17 @@ int main(void)
 			  count = 200;
 		  }
 		  break;
-
 	  case YELLOW:
 		  red_led(OFF);
+		  green_led(OFF);
 		  yellow_led(ON);
 
 		  if(count == 0){
 			  state = RED;
-			  count = 200;
+			  count = 500;
 		  }
 		  break;
+
 
 	  }
 	  --count;
@@ -190,10 +208,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, RED_LED_Pin|YELLOW_LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, RED_LED_Pin|YELLOW_LED_Pin|GREEN_LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : RED_LED_Pin YELLOW_LED_Pin */
-  GPIO_InitStruct.Pin = RED_LED_Pin|YELLOW_LED_Pin;
+  /*Configure GPIO pins : RED_LED_Pin YELLOW_LED_Pin GREEN_LED_Pin */
+  GPIO_InitStruct.Pin = RED_LED_Pin|YELLOW_LED_Pin|GREEN_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -208,7 +226,9 @@ void red_led(uint8_t n) {
 void yellow_led(uint8_t n) {
 	HAL_GPIO_WritePin(YELLOW_LED_GPIO_Port, YELLOW_LED_Pin, n);
 }
-
+void green_led(uint8_t n) {
+	HAL_GPIO_WritePin(GREEN_LED_GPIO_Port, GREEN_LED_Pin, n);
+}
 /* USER CODE END 4 */
 
 /**
