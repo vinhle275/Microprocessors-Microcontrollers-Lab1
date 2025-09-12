@@ -32,11 +32,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define INIT 0
-#define RED 1
-#define GREEN 2
-#define YELLOW 3
-
 #define ON 0
 #define OFF 1
 /* USER CODE END PD */
@@ -56,20 +51,15 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-void red_1_led(uint8_t n);
-void yellow_1_led(uint8_t n);
-void green_1_led(uint8_t n);
-void red_2_led(uint8_t n);
-void yellow_2_led(uint8_t n);
-void green_2_led(uint8_t n);
-void rgy_control(
-    uint8_t colour,
-	uint8_t* pstate,
-	uint16_t* pcount,
-    void (*red_led)(uint8_t),
-    void (*yellow_led)(uint8_t),
-    void (*green_led)(uint8_t)
-);
+void a_led(uint8_t n);
+void b_led(uint8_t n);
+void c_led(uint8_t n);
+void d_led(uint8_t n);
+void e_led(uint8_t n);
+void f_led(uint8_t n);
+void g_led(uint8_t n);
+void display7SEG(int num);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -106,17 +96,25 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t state[2] = {INIT, INIT};
-  uint16_t count[2] = {100, 100};
+		uint16_t count = 100;
+		int num_counter = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  rgy_control(RED, &state[0], &count[0], red_1_led, yellow_1_led, green_1_led);
-	  rgy_control(GREEN, &state[1], &count[1], red_2_led, yellow_2_led, green_2_led);
-	  HAL_Delay(10);
+		if(count == 0){
+			count = 100;
+			++num_counter;
+		}
+
+		if(num_counter == 10) num_counter = 0;
+
+		display7SEG(num_counter);
+
+		--count;
+		HAL_Delay(10);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -169,107 +167,142 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, RED_1_LED_Pin|YELLOW_1_LED_Pin|GREEN_1_LED_Pin|RED_2_LED_Pin
-                          |YELLOW_2_LED_Pin|GREEN_2_LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, A_LED_Pin|B_LED_Pin|C_LED_Pin|D_LED_Pin
+                          |E_LED_Pin|F_LED_Pin|G_LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : RED_1_LED_Pin YELLOW_1_LED_Pin GREEN_1_LED_Pin RED_2_LED_Pin
-                           YELLOW_2_LED_Pin GREEN_2_LED_Pin */
-  GPIO_InitStruct.Pin = RED_1_LED_Pin|YELLOW_1_LED_Pin|GREEN_1_LED_Pin|RED_2_LED_Pin
-                          |YELLOW_2_LED_Pin|GREEN_2_LED_Pin;
+  /*Configure GPIO pins : A_LED_Pin B_LED_Pin C_LED_Pin D_LED_Pin
+                           E_LED_Pin F_LED_Pin G_LED_Pin */
+  GPIO_InitStruct.Pin = A_LED_Pin|B_LED_Pin|C_LED_Pin|D_LED_Pin
+                          |E_LED_Pin|F_LED_Pin|G_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
 /* USER CODE BEGIN 4 */
-void red_1_led(uint8_t n) {
-	HAL_GPIO_WritePin(RED_1_LED_GPIO_Port, RED_1_LED_Pin, n);
+void a_led(uint8_t n){
+	HAL_GPIO_WritePin(A_LED_GPIO_Port, A_LED_Pin, n);
 }
-void yellow_1_led(uint8_t n) {
-	HAL_GPIO_WritePin(YELLOW_1_LED_GPIO_Port, YELLOW_1_LED_Pin, n);
+void b_led(uint8_t n){
+	HAL_GPIO_WritePin(B_LED_GPIO_Port, B_LED_Pin, n);
 }
-void green_1_led(uint8_t n) {
-	HAL_GPIO_WritePin(GREEN_1_LED_GPIO_Port, GREEN_1_LED_Pin, n);
+void c_led(uint8_t n){
+	HAL_GPIO_WritePin(C_LED_GPIO_Port, C_LED_Pin, n);
 }
-void red_2_led(uint8_t n) {
-	HAL_GPIO_WritePin(RED_2_LED_GPIO_Port, RED_2_LED_Pin, n);
+void d_led(uint8_t n){
+	HAL_GPIO_WritePin(D_LED_GPIO_Port, D_LED_Pin, n);
 }
-void yellow_2_led(uint8_t n) {
-	HAL_GPIO_WritePin(YELLOW_2_LED_GPIO_Port, YELLOW_2_LED_Pin, n);
+void e_led(uint8_t n){
+	HAL_GPIO_WritePin(E_LED_GPIO_Port, E_LED_Pin, n);
 }
-void green_2_led(uint8_t n) {
-	HAL_GPIO_WritePin(GREEN_2_LED_GPIO_Port, GREEN_2_LED_Pin, n);
+void f_led(uint8_t n){
+	HAL_GPIO_WritePin(F_LED_GPIO_Port, F_LED_Pin, n);
 }
-void rgy_control(
-    uint8_t colour,
-	uint8_t* pstate,
-	uint16_t* pcount,
-    void (*red_led)(uint8_t),
-    void (*yellow_led)(uint8_t),
-    void (*green_led)(uint8_t)
-){
-
-	  switch(*pstate){
-	  case INIT:
-		  red_led(ON);
-		  green_led(ON);
-		  yellow_led(ON);
-
-		  if(*pcount == 0){
-			  *pstate = colour;
-			  switch(colour){
-			  case RED:
-				  *pcount = 500;
-				  break;
-			  case GREEN:
-				  *pcount = 300;
-				  break;
-			  case YELLOW:
-				  *pcount = 200;
-				  break;
-			  }
-		  }
-		  break;
-	  case RED:
-		  red_led(ON);
-		  green_led(OFF);
-		  yellow_led(OFF);
-
-		  if(*pcount == 0){
-			  *pstate = GREEN;
-			  *pcount = 300;
-		  }
-		  break;
-	  case GREEN:
-		  red_led(OFF);
-		  green_led(ON);
-		  yellow_led(OFF);
-
-		  if(*pcount == 0){
-			  *pstate = YELLOW;
-			  *pcount = 200;
-		  }
-		  break;
-	  case YELLOW:
-		  red_led(OFF);
-		  green_led(OFF);
-		  yellow_led(ON);
-
-		  if(*pcount == 0){
-			  *pstate = RED;
-			  *pcount = 500;
-		  }
-		  break;
-
-	  }
-	  --*pcount;
-
+void g_led(uint8_t n){
+	HAL_GPIO_WritePin(G_LED_GPIO_Port, G_LED_Pin, n);
 }
+void display7SEG(int num){
+
+	switch(num){
+	case 0:
+		a_led(ON);
+		b_led(ON);
+		c_led(ON);
+		d_led(ON);
+		e_led(ON);
+		f_led(ON);
+		g_led(OFF);
+		break;
+	case 1:
+		a_led(OFF);
+		b_led(ON);
+		c_led(ON);
+		d_led(OFF);
+		e_led(OFF);
+		f_led(OFF);
+		g_led(OFF);
+		break;
+	case 2:
+		a_led(ON);
+		b_led(ON);
+		c_led(OFF);
+		d_led(ON);
+		e_led(ON);
+		f_led(OFF);
+		g_led(ON);
+		break;
+	case 3:
+		a_led(ON);
+		b_led(ON);
+		c_led(ON);
+		d_led(ON);
+		e_led(OFF);
+		f_led(OFF);
+		g_led(ON);
+		break;
+	case 4:
+		a_led(OFF);
+		b_led(ON);
+		c_led(ON);
+		d_led(OFF);
+		e_led(OFF);
+		f_led(ON);
+		g_led(ON);
+		break;
+	case 5:
+		a_led(ON);
+		b_led(OFF);
+		c_led(ON);
+		d_led(ON);
+		e_led(OFF);
+		f_led(ON);
+		g_led(ON);
+		break;
+	case 6:
+		a_led(ON);
+		b_led(OFF);
+		c_led(ON);
+		d_led(ON);
+		e_led(ON);
+		f_led(ON);
+		g_led(ON);
+		break;
+	case 7:
+		a_led(ON);
+		b_led(ON);
+		c_led(ON);
+		d_led(OFF);
+		e_led(OFF);
+		f_led(OFF);
+		g_led(OFF);
+		break;
+	case 8:
+		a_led(ON);
+		b_led(ON);
+		c_led(ON);
+		d_led(ON);
+		e_led(ON);
+		f_led(ON);
+		g_led(ON);
+		break;
+	case 9:
+		a_led(ON);
+		b_led(ON);
+		c_led(ON);
+		d_led(ON);
+		e_led(OFF);
+		f_led(ON);
+		g_led(ON);
+		break;
+
+	}
+}
+
 /* USER CODE END 4 */
 
 /**
