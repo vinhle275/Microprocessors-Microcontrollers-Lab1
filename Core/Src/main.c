@@ -34,10 +34,6 @@
 /* USER CODE BEGIN PD */
 #define ON 0
 #define OFF 1
-#define INIT 0
-#define CLEAR_ALL 1
-#define SET 2
-#define CLEAR 3
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -71,7 +67,8 @@ void led_11(uint8_t n);
 void clearAllClock();
 void setNumberOnClock(int num);
 void clearNumberOnClock(int num);
-void test(uint16_t* pcount);
+void display_clock(uint16_t* pcount);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -115,7 +112,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  test(&count[0]);
+	  display_clock(&count[0]);
 	  HAL_Delay(10);
     /* USER CODE END WHILE */
 
@@ -326,59 +323,32 @@ void clearNumberOnClock(int num){
 
 }
 
-void test(uint16_t* pcount){
-	static uint8_t state = INIT;
-	static int num = 0;
+void display_clock(uint16_t* pcount){
+	static int sec = 0, min = 0, hour = 0;
 
-	switch(state){
-	case INIT:
-		led_0(ON);
-		led_1(ON);
-		led_2(ON);
-		led_3(ON);
-		led_4(ON);
-		led_5(ON);
-		led_6(ON);
-		led_7(ON);
-		led_8(ON);
-		led_9(ON);
-		led_10(ON);
-		led_11(ON);
 
-		if(*pcount == 0){
-			*pcount = 100;
-			state = CLEAR_ALL;
-		}
-		break;
-	case CLEAR_ALL:
-		if(*pcount == 0){
-			clearAllClock();
-			*pcount = 100;
-			state = SET;
-		}
-		break;
-	case SET:
-		if(*pcount == 0){
-			setNumberOnClock(num++);
-			*pcount = 50;
-			if(num == 12){
-				num = 0;
-				state = CLEAR;
-			}
-		}
-		break;
-	case CLEAR:
-		if(*pcount == 0){
-			clearNumberOnClock(num++);
-			*pcount = 50;
-			if(num == 12){
-				num = 0;
-				state = SET;
-			}
-		}
-		break;
+	if(*pcount == 0){
+		clearAllClock();
+		setNumberOnClock(sec/5);
+		setNumberOnClock(min/5);
+		setNumberOnClock(hour);
+
+		*pcount = 1;
+		++sec;
 	}
+	if(sec == 60){
+		sec = 0;
+		++min;
+	}
+	if(min == 60){
+		min = 0;
+		++hour;
+	}
+	if(hour == 12) hour = 0;
+
 	--*pcount;
+
+
 }
 
 /* USER CODE END 4 */
