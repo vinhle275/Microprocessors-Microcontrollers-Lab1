@@ -34,6 +34,10 @@
 /* USER CODE BEGIN PD */
 #define ON 0
 #define OFF 1
+#define INIT 0
+#define CLEAR_ALL 1
+#define SET 2
+#define CLEAR 3
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,8 +67,11 @@ void led_8(uint8_t n);
 void led_9(uint8_t n);
 void led_10(uint8_t n);
 void led_11(uint8_t n);
-void test(uint16_t* pcount);
 
+void clearAllClock();
+void setNumberOnClock(int num);
+void clearNumberOnClock(int num);
+void test(uint16_t* pcount);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -108,9 +115,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
 	  test(&count[0]);
 	  HAL_Delay(10);
+    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   }
@@ -219,187 +226,161 @@ void led_10(uint8_t n){
 void led_11(uint8_t n){
 	HAL_GPIO_WritePin(LED_11_GPIO_Port, LED_11_Pin, n);
 }
-void test(uint16_t* pcount){
-	static uint8_t num = 0;
-	if(num == 12) num = 0;
 
-	if(*pcount == 0){
-		switch(num){
-		case 0:
-			led_0(ON);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 1:
-			led_0(OFF);
-			led_1(ON);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 2:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(ON);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 3:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(ON);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 4:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(ON);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 5:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(ON);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 6:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(ON);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 7:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(ON);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 8:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(ON);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 9:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(ON);
-			led_10(OFF);
-			led_11(OFF);
-			break;
-		case 10:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(ON);
-			led_11(OFF);
-			break;
-		case 11:
-			led_0(OFF);
-			led_1(OFF);
-			led_2(OFF);
-			led_3(OFF);
-			led_4(OFF);
-			led_5(OFF);
-			led_6(OFF);
-			led_7(OFF);
-			led_8(OFF);
-			led_9(OFF);
-			led_10(OFF);
-			led_11(ON);
-			break;
-		}
-		*pcount = 100;
-		++num;
+void clearAllClock (){
+	led_0(OFF);
+	led_1(OFF);
+	led_2(OFF);
+	led_3(OFF);
+	led_4(OFF);
+	led_5(OFF);
+	led_6(OFF);
+	led_7(OFF);
+	led_8(OFF);
+	led_9(OFF);
+	led_10(OFF);
+	led_11(OFF);
+}
+void setNumberOnClock(int num){
+	switch(num){
+	case 0:
+		led_0(ON);
+		break;
+	case 1:
+		led_1(ON);
+		break;
+	case 2:
+		led_2(ON);
+		break;
+	case 3:
+		led_3(ON);
+		break;
+	case 4:
+		led_4(ON);
+		break;
+	case 5:
+		led_5(ON);
+		break;
+	case 6:
+		led_6(ON);
+		break;
+	case 7:
+		led_7(ON);
+		break;
+	case 8:
+		led_8(ON);
+		break;
+	case 9:
+		led_9(ON);
+		break;
+	case 10:
+		led_10(ON);
+		break;
+	case 11:
+		led_11(ON);
+		break;
 	}
-	--*pcount;
+
 
 }
+void clearNumberOnClock(int num){
+	switch(num){
+	case 0:
+		led_0(OFF);
+		break;
+	case 1:
+		led_1(OFF);
+		break;
+	case 2:
+		led_2(OFF);
+		break;
+	case 3:
+		led_3(OFF);
+		break;
+	case 4:
+		led_4(OFF);
+		break;
+	case 5:
+		led_5(OFF);
+		break;
+	case 6:
+		led_6(OFF);
+		break;
+	case 7:
+		led_7(OFF);
+		break;
+	case 8:
+		led_8(OFF);
+		break;
+	case 9:
+		led_9(OFF);
+		break;
+	case 10:
+		led_10(OFF);
+		break;
+	case 11:
+		led_11(OFF);
+		break;
+	}
+
+
+}
+
+void test(uint16_t* pcount){
+	static uint8_t state = INIT;
+	static int num = 0;
+
+	switch(state){
+	case INIT:
+		led_0(ON);
+		led_1(ON);
+		led_2(ON);
+		led_3(ON);
+		led_4(ON);
+		led_5(ON);
+		led_6(ON);
+		led_7(ON);
+		led_8(ON);
+		led_9(ON);
+		led_10(ON);
+		led_11(ON);
+
+		if(*pcount == 0){
+			*pcount = 100;
+			state = CLEAR_ALL;
+		}
+		break;
+	case CLEAR_ALL:
+		if(*pcount == 0){
+			clearAllClock();
+			*pcount = 100;
+			state = SET;
+		}
+		break;
+	case SET:
+		if(*pcount == 0){
+			setNumberOnClock(num++);
+			*pcount = 50;
+			if(num == 12){
+				num = 0;
+				state = CLEAR;
+			}
+		}
+		break;
+	case CLEAR:
+		if(*pcount == 0){
+			clearNumberOnClock(num++);
+			*pcount = 50;
+			if(num == 12){
+				num = 0;
+				state = SET;
+			}
+		}
+		break;
+	}
+	--*pcount;
+}
+
 /* USER CODE END 4 */
 
 /**
